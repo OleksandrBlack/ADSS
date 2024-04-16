@@ -72,15 +72,15 @@ if [ -r /etc/os-release ]; then
       sudo mkdir -p "$WORKING_DIR"
       sudo chown $(whoami) "$WORKING_DIR"
       if [[ "$PACKAGE_MANAGER" == "pacman" ]]; then
-          git clone -b arch https://github.com/it-army-ua-scripts/ADSS.git "$WORKING_DIR"
+          git clone -b arch https://github.com/OleksandrBlack/ADSS.git "$WORKING_DIR"
       elif [ "$PACKAGE_MANAGER" == "xbps-install" ]; then
-          git clone -b void https://github.com/it-army-ua-scripts/ADSS.git "$WORKING_DIR"
+          git clone -b void https://github.com/OleksandrBlack/ADSS.git "$WORKING_DIR"
       elif [ "$PACKAGE_MANAGER" == "yum" ]; then
-          git clone -b centos https://github.com/it-army-ua-scripts/ADSS.git "$WORKING_DIR"
+          git clone -b centos https://github.com/OleksandrBlack/ADSS.git "$WORKING_DIR"
       elif [ "$PACKAGE_MANAGER" == "emerge" ]; then
-          git clone -b gentoo https://github.com/it-army-ua-scripts/ADSS.git "$WORKING_DIR"
+          git clone -b gentoo https://github.com/OleksandrBlack/ADSS.git "$WORKING_DIR"
       else
-          git clone https://github.com/it-army-ua-scripts/ADSS.git "$WORKING_DIR"
+          git clone https://github.com/OleksandrBlack/ADSS.git "$WORKING_DIR"
       fi
     fi
 
