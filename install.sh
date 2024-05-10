@@ -80,7 +80,7 @@ if [ -r /etc/os-release ]; then
       elif [ "$PACKAGE_MANAGER" == "emerge" ]; then
           git clone -b gentoo https://github.com/OleksandrBlack/ADSS.git "$WORKING_DIR"
       else
-          git clone https://github.com/OleksandrBlack/ADSS.git "$WORKING_DIR"
+          git clone -b x100 https://github.com/OleksandrBlack/ADSS.git "$WORKING_DIR"
       fi
     fi
 
