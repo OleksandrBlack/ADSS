@@ -37,9 +37,25 @@ x100_get_status() {
   read -s -n 1 key
   initiate_x100
 }
+
 docker_installed() {
   docker container ls   1>/dev/null   2>/dev/null  && return 0 || return 1
 }
+
+install_docker() {
+  if [ -r /etc/os-release ]; then
+    clear
+    sudo apt install -y docker.io
+    sudo service docker start
+    sudo service docker enable
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+    newgrp docker
+  else
+    echo -e "${RED}Неможливо визначити операційну систему/Unable to determine operating system${NC}"
+  fi
+}
+
 initiate_x100() {
    x100_installed
    if [[ $? == 1 ]]; then
@@ -47,19 +63,21 @@ initiate_x100() {
       res=$(display_menu "$(trans "X100 не встановлений, встановити?")" "${menu_items[@]}")
       case "$res" in
         "$(trans "Так")")
+          confirm_dialog "$(trans "Встановлюємо Х100")"
           install_x100
+          confirm_dialog "$(trans "Х100 успішно встановлено")"
+          docker_installed
+          if [[ $? == 1 ]]; then
+            confirm_dialog "$(trans "Встановлюємо докер")"
+            install_docker
+            confirm_dialog "$(trans "Докер успішно встановлено")"
+          fi
         ;;
         "$(trans "Ні")")
           ddos_tool_managment
         ;;
       esac
-      exit 0
-   fi
-   docker_installed
-   if [[ $? == 1 ]]; then
-     confirm_dialog "$(trans "Докер не встановлений або не запущений. Будь ласка виправте це і спробуйте знову")"
-     ddos_tool_managment
-     exit 0
+#      exit 0
    fi
   if sudo systemctl is-active x100 >/dev/null 2>&1; then
     active_disactive="$(trans "Зупинка X100")"
@@ -80,7 +98,7 @@ initiate_x100() {
    ;;
    "$(trans "Налаштування X100")")
      confirm_dialog "$(trans "Даний функціонал ще в розробці")"
-     ddos_tool_managment
+     initiate_x100
    ;;
    "$(trans "Статус X100")")
      x100_get_status
@@ -112,7 +130,7 @@ install_x100() {
     chmod -R ug+x "./for-macOS-and-Linux-hosts"
 
     echo -ne "${GREEN}$(trans "Для збору особистої статистики та відображення у лідерборді на офіційному сайті.")${NC} ${ORANGE}https://itarmy.com.ua/leaderboard ${NC}""\n"
-    echo -ne "${GREEN}$(trans "Надається Telegram ботом")${NC} ${ORANGE}@itarmy_stat_bot${NC}""\n"
+    echo -ne "${GREEN}$(trans "Надається Telegram ботом")${NC} ${ORANGE}@itarmy_stats_bot${NC}""\n"
     echo -ne "\n"
     read -e -p "$(trans "Юзер ІД: ")"  user_id
 
@@ -142,5 +160,4 @@ install_x100() {
 
     echo -e "${ORANGE}$(trans "Нажміть будь яку клавішу щоб продовжити")${NC}"
     read -s -n 1 key
-    initiate_x100
 }
