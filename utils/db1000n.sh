@@ -209,16 +209,21 @@ db1000n_enabled() {
 }
 
 db1000n_get_status() {
-  clear
-  sudo systemctl status db1000n.service
-  echo -e "${ORANGE}$(trans "Нажміть будь яку клавішу щоб продовжити")${NC}"
-  read -s -n 1 key
+  while true; do
+    clear
+    st=$(sudo systemctl status db1000n.service)
+    echo "$st"
+    echo -e "${ORANGE}$(trans "Нажміть будь яку клавішу щоб продовжити")${NC}"
+    sleep 3
+    if read -rsn1 -t 0.1; then
+      break
+    fi
+  done
   initiate_db1000n
 }
 
 db1000n_installed() {
   if [[ ! -f "$TOOL_DIR/db1000n" ]]; then
-      confirm_dialog "$(trans "DB1000N не встановлений, будь ласка встановіть і спробуйте знову")"
       return 1
   else
       return 0
@@ -228,6 +233,7 @@ db1000n_installed() {
 initiate_db1000n() {
   db1000n_installed
   if [[ $? == 1 ]]; then
+    confirm_dialog "$(trans "DB1000N не встановлений, будь ласка встановіть і спробуйте знову")"
     ddos_tool_managment
   else
       if sudo systemctl is-active db1000n >/dev/null 2>&1; then

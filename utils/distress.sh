@@ -294,16 +294,21 @@ distress_stop() {
 }
 
 distress_get_status() {
-  clear
-  sudo systemctl status distress.service
-  echo -e "${ORANGE}$(trans "Нажміть будь яку клавішу щоб продовжити")${NC}"
-  read -s -n 1 key
+  while true; do
+    clear
+    st=$(sudo systemctl status distress.service)
+    echo "$st"
+    echo -e "${ORANGE}$(trans "Нажміть будь яку клавішу щоб продовжити")${NC}"
+    sleep 3
+    if read -rsn1 -t 0.1; then
+      break
+    fi
+  done
   initiate_distress
 }
 
 distress_installed() {
   if [[ ! -f "$TOOL_DIR/distress" ]]; then
-      confirm_dialog "$(trans "DISTRESS не встановлений, будь ласка встановіть і спробуйте знову")"
       return 1
   else
       return 0
@@ -313,6 +318,7 @@ distress_installed() {
 initiate_distress() {
    distress_installed
    if [[ $? == 1 ]]; then
+    confirm_dialog "$(trans "DISTRESS не встановлений, будь ласка встановіть і спробуйте знову")"
     ddos_tool_managment
   else
       if sudo systemctl is-active distress >/dev/null 2>&1; then

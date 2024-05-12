@@ -200,15 +200,20 @@ mhddos_stop() {
 }
 
 mhddos_get_status() {
-  clear
-  sudo systemctl status mhddos.service
-  echo -e "${ORANGE}$(trans "Нажміть будь яку клавішу щоб продовжити")${NC}"
-  read -s -n 1 key
+  while true; do
+    clear
+    st=$(sudo systemctl status mhddos.service)
+    echo "$st"
+    echo -e "${ORANGE}$(trans "Нажміть будь яку клавішу щоб продовжити")${NC}"
+    sleep 3
+    if read -rsn1 -t 0.1; then
+      break
+    fi
+  done
   initiate_mhddos
 }
 mhddos_installed() {
   if [[ ! -f "$TOOL_DIR/mhddos_proxy_linux" ]]; then
-      confirm_dialog "$(trans "MHDDOS не встановлений, будь ласка встановіть і спробуйте знову")"
       return 1
   else
       return 0
@@ -226,6 +231,7 @@ is_not_arm_arch() {
 initiate_mhddos() {
   mhddos_installed
   if [[ $? == 1 ]]; then
+    confirm_dialog "$(trans "MHDDOS не встановлений, будь ласка встановіть і спробуйте знову")"
     ddos_tool_managment
   else
       if sudo systemctl is-active mhddos >/dev/null 2>&1; then
