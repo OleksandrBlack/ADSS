@@ -58,7 +58,7 @@ get_ddoss_status() {
       #Fix Ubuntu < 19
       lsb_version="$(. /etc/os-release && echo "$VERSION_ID")"
       lsb_id="$(. /etc/os-release && echo "$ID")"
-	  
+
       if [[ "$lsb_id" == "ubuntu" ]] &&
          [[ "$lsb_version" < 19* ]]; then
         journalctl -n 20 -u "$service.service" --no-pager
